@@ -16,14 +16,16 @@ ifneq ($(wildcard $(BUILD_WORK)/curl/.build_complete),)
 curl:
 	@echo "Using previously built curl."
 else
-curl: curl-setup gettext openssl libssh2 nghttp2 libidn2 brotli zstd rtmpdump
+curl: curl-setup gettext openssl libssh2 nghttp2 libidn2 brotli zstd rtmpdump ngtcp2 nghttp3
 	cd $(BUILD_WORK)/curl && autoreconf -vi
 	cd $(BUILD_WORK)/curl && ./configure -C \
 		$(DEFAULT_CONFIGURE_FLAGS) \
 		--disable-debug \
 		--disable-dependency-tracking \
 		--with-libssh2 \
+		--with-ngtcp2 \
 		--with-nghttp2 \
+		--with-nghttp3 \
 		--with-ca-bundle=$(MEMO_PREFIX)/etc/ssl/certs/cacert.pem
 	+$(MAKE) -C $(BUILD_WORK)/curl
 	+$(MAKE) -C $(BUILD_WORK)/curl install \

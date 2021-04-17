@@ -12,7 +12,8 @@ else # ($(MEMO_TARGET),darwin-\*)
 SUBPROJECTS     += openssl
 endif
 OPENSSL_VERSION := 1.1.1k
-DEB_OPENSSL_V   ?= $(OPENSSL_VERSION)
+DEB_OPENSSL_V   ?= $(OPENSSL_VERSION)+quic
+OPENSSL_DL_VERSION := $(shell echo $(OPENSSL_VERSION) | sed 's/\./_/g')
 
 ###
 #
@@ -31,9 +32,15 @@ else
 endif
 
 openssl-setup: setup
-	wget -q -nc -P $(BUILD_SOURCE) https://www.openssl.org/source/openssl-$(OPENSSL_VERSION).tar.gz{,.asc}
-	$(call PGP_VERIFY,openssl-$(OPENSSL_VERSION).tar.gz,asc)
-	$(call EXTRACT_TAR,openssl-$(OPENSSL_VERSION).tar.gz,openssl-$(OPENSSL_VERSION),openssl)
+	# $(call GITHUB_ARCHIVE,quictls,openssl,$(OPENSSL_VERSION),OpenSSL_$(OPENSSL_DL_VERSION)+quic)
+	# $(call EXTRACT_TAR,openssl-$(OPENSSL_VERSION).tar.gz,openssl-$(OPENSSL_VERSION),openssl)
+	git clone \
+		--depth=1 \
+		--single-branch \
+		--branch OpenSSL_$(OPENSSL_DL_VERSION)+quic \
+		https://github.com/quictls/openssl.git \
+		$(BUILD_WORK)/openssl
+	cd $(BUILD_WORK)/openssl && git submodule update --init
 	touch $(BUILD_WORK)/openssl/Configurations/15-diatrus.conf
 	@echo -e "my %targets = (\n\
 		\"aarch64-apple-darwin\" => {\n\
@@ -61,6 +68,7 @@ openssl: openssl-setup
 	cd $(BUILD_WORK)/openssl && ./Configure \
 		--prefix=$(MEMO_PREFIX)$(MEMO_SUB_PREFIX) \
 		--openssldir=$(MEMO_PREFIX)/etc/ssl \
+		enable-tls1_3 \
 		shared \
 		$(SSL_SCHEME)
 	+$(MAKE) -C $(BUILD_WORK)/openssl

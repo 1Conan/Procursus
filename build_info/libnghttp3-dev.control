@@ -1,0 +1,11 @@
+Package: libnghttp3-dev
+Version: @DEB_NGHTTP3_V@
+Architecture: @DEB_ARCH@
+Maintainer: @DEB_MAINTAINER@
+Section: Development
+Priority: standard
+Homepage: https://github.com/ngtcp2/nghttp3
+Description: library implementing HTTP/3 mapping over QUIC and QPACK (development files)
+ It does not depend on any particular QUIC transport implementation.
+ .
+ This package installs development files.
