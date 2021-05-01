@@ -5,14 +5,8 @@
     <true/>
     <key>com.apple.security.exception.files.absolute-path.read-write</key>
     <array>
-	    <string>/</string>
+        <string>/</string>
     </array>
-    <key>platform-application</key>
-    <true/>
-    <key>com.apple.private.skip-library-validation</key>
-    <true/>
-    <key>get-task-allow</key>
-    <true/>
     <key>dynamic-codesigning</key>
     <true/>
 </dict>
